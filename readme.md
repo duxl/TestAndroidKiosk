@@ -517,6 +517,7 @@ app/
 {
   "android.app.extra.PROVISIONING_DEVICE_ADMIN_COMPONENT_NAME": "com.your.kiosk/.MyDeviceAdminReceiver",
   "android.app.extra.PROVISIONING_DEVICE_ADMIN_PACKAGE_DOWNLOAD_LOCATION": "https://你的服务器/kiosk.apk",
+  "android.app.extra.PROVISIONING_DEVICE_ADMIN_SIGNATURE_CHECKSUM": "你的签名文件SHA256",
   "android.app.extra.PROVISIONING_SKIP_ENCRYPTION": true,
   "android.app.extra.PROVISIONING_WIFI_SSID": "你的WiFi名",
   "android.app.extra.PROVISIONING_WIFI_PASSWORD": "你的WiFi密码"
