@@ -365,7 +365,27 @@ adb shell dpm set-device-owner com.example.kiosk/.MyDeviceAdminReceiver
 adb shell dpm remove-active-admin com.example.kiosk/.MyDeviceAdminReceiver
 ```
 
-或恢复出厂，修改代码后重新运行也需要先清除。
+或恢复出厂；修改代码后重新run也需要执行上面的remove-active-admin先清除。
+
+**也可以将解除 admin" 做成 Studio 启动前置任务，配置如下**
+1. 顶部菜单 **Run → Edit Configurations**
+2. 左边选你的 app
+3. 找到 **Before launch** 区块（最下面）
+4. 点 **+** → **Run External Tool**
+5. 再点 **+** → **Create new tool**：
+
+表格
+
+| 字段 | 填写 |
+| --- | --- |
+| Name | `Remove Device Admin` |
+| Program | `adb` |
+| Arguments | `shell dpm remove-active-admin com.test.kiosk/.MyDeviceAdminReceiver` |
+| Working directory | `$ProjectFileDir$` |
+
+> 配置后就可以直接run了(可以覆盖安装)，但app启动后应该还是会报错，需要手动再执行下
+
+> adb shell dpm set-device-owner com.example.kiosk/.MyDeviceAdminReceiver
 
 ---
 
