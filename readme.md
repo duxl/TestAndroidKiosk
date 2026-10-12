@@ -38,6 +38,8 @@
 
 适合 "开机只能用这一个 App，退不出去" 的设备。Android 官方提供 **Lock Task Mode**：
 
+![Android Kiosk介绍](1.png)
+
 ### 1. 写一个 DeviceAdminReceiver
 
 ```
@@ -279,6 +281,10 @@ class BootReceiver : BroadcastReceiver() {
 
 ```
 // MainActivity.kt
+// 如果希望 Activity 在包已列入白名单时自动进入锁任务模式，可以通过 Manifest 自动启动 
+// 增加配置：android:lockTaskMode="if_whitelisted"
+// if_whitelisted 并不会替代 Device Owner 配置，也不会自动将应用加入白名单。
+// 它只是在应用已获准进入锁任务模式时，让系统按该声明处理 Activity。
 class MainActivity : AppCompatActivity() {
 
     private lateinit var dpm: DevicePolicyManager
@@ -490,3 +496,35 @@ app/
 - [`DevicePolicyManager.setLockTaskPackages()`](https://developer.android.com/reference/android/app/admin/DevicePolicyManager#setLockTaskPackages(android.content.ComponentName,%20java.lang.String%5B%5D)) —— 白名单
 - [`Activity.startLockTask()`](https://developer.android.com/reference/android/app/Activity#startLockTask()) —— 进入
 - [`Activity.stopLockTask()`](https://developer.android.com/reference/android/app/Activity#stopLockTask()) —— 退出
+
+---
+
+
+## QR Code 扫码配置（工厂批量部署用）
+
+如果设备刚恢复出厂，还在开机向导页，可以用**扫码**让系统自动下载你的 APK 并设为 owner。
+
+### 操作步骤
+
+1. **平板恢复出厂**，停在欢迎页（选语言那页）
+2. **连续点击屏幕右下角 6~7 次**（部分设备是双指点击），进入 "扫码登录" 模式
+3. 用**另一台手机**生成一个 QR Code（下面是内容）
+4. 平板扫码 → 系统自动下载 APK → 自动设为 owner
+
+### QR Code 内容（JSON 格式）
+
+```
+{
+  "android.app.extra.PROVISIONING_DEVICE_ADMIN_COMPONENT_NAME": "com.your.kiosk/.MyDeviceAdminReceiver",
+  "android.app.extra.PROVISIONING_DEVICE_ADMIN_PACKAGE_DOWNLOAD_LOCATION": "https://你的服务器/kiosk.apk",
+  "android.app.extra.PROVISIONING_SKIP_ENCRYPTION": true,
+  "android.app.extra.PROVISIONING_WIFI_SSID": "你的WiFi名",
+  "android.app.extra.PROVISIONING_WIFI_PASSWORD": "你的WiFi密码"
+}
+```
+
+### 关键说明
+
+- `COMPONENT_NAME`：你的 DPC 完整类名（包名 + 接收器）
+- `DOWNLOAD_LOCATION`：APK 的下载地址，必须是 HTTPS
+- 甚至可以**连 WiFi 都帮你配好**（PROVISIONING_WIFI_*）

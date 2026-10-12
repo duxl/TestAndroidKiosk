@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <device-admin xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-policies>
+        <!-- 密码策略限制: 允许管理员设置密码质量、最小长度等密码要求 -->
         <limit-password />
+        <!-- 监控登录失败: 允许监听密码解锁失败次数等事件 -->
         <watch-login />
+        <!-- 重置密码: 允许使用传统设备管理 API 重置设备锁屏密码，具体能力受 Android 版本和管理权限限制 -->
         <reset-password />
+        <!-- 强制锁屏: 允许调用 DevicePolicyManager.lockNow() 立即锁定设备 -->
         <force-lock />
+        <!-- 清除设备数据: 允许调用 DevicePolicyManager.wipeData() 清除设备数据 -->
         <wipe-data />
     </uses-policies>
 </device-admin>

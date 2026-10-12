@@ -26,13 +26,12 @@
 
         <!--
             excludeFromRecents="true" 让它不出现在最近任务里
+            android:lockTaskMode="always" 这个可以自动进入锁任务模式，只是在代码中启动可以配置更多参数
         -->
-
         <activity
-            android:name=".MainActivity"
+            android:name="com.test.kiosk.activity.SplashActivity"
             android:excludeFromRecents="true"
-            android:exported="true"
-            android:windowSoftInputMode="adjustResize">
+            android:exported="true">
             <intent-filter>
                 <!--
                 category.HOME + category.DEFAULT 让它成为桌面
@@ -47,7 +46,11 @@
         </activity>
 
         <activity
-            android:name=".OtherActivity"
+            android:name=".activity.MainActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".activity.OtherActivity"
             android:exported="false" />
 
         <!-- 设备管理员 Receiver -->

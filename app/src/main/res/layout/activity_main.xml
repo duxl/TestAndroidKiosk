@@ -7,12 +7,12 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".activity.MainActivity">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Android Kiosk（锁任务模式）"
+        android:text="Android Kiosk（锁任务模式中...）"
         android:textAllCaps="false"
         android:textSize="20sp" />
 
@@ -20,15 +20,22 @@
         android:id="@+id/btn_other"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="130dp"
         android:text="Open Other Page"
         android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/btn_lock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="锁定屏幕（可按电源键解锁）" />
 
     <Button
         android:id="@+id/btn_exit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="130dp"
+        android:layout_marginTop="30dp"
         android:text="退出锁任务" />
 
 

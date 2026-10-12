@@ -1,9 +1,10 @@
-package com.test.kiosk
+package com.test.kiosk.activity
 
 import android.app.admin.DevicePolicyManager
-import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.KeyEvent
 import android.view.WindowManager
 import androidx.activity.enableEdgeToEdge
@@ -12,15 +13,21 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import com.test.kiosk.KioskManager
+import com.test.kiosk.R
 import com.test.kiosk.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
+    private val TAG = "MainActivity"
+
     private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
-    private lateinit var dpm: DevicePolicyManager
-    private lateinit var admin: ComponentName
+
+    private val kioskManager by lazy {
+        KioskManager(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,24 +39,25 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+        if (!kioskManager.isDeviceOwner()) {
+            Log.e(TAG, "当前设备没有正确配置 Device Owner");
+            return
+        }
 
-        dpm = getSystemService(DEVICE_POLICY_SERVICE) as DevicePolicyManager
-        admin = ComponentName(this, MyDeviceAdminReceiver::class.java)
-
-        // ========== 关键 1：把自己加进 LockTask 白名单 ==========
-        // 只有白名单里的包才能进入/退出 lockTask
-        val approvedPackages = dpm.getLockTaskPackages(admin).toMutableSet()
-        approvedPackages.add(packageName)
-        dpm.setLockTaskPackages(admin, approvedPackages.toTypedArray())
-
-        // ========== 关键 2：进入锁任务模式 ==========
+        // 配置LockTask（不配置直接startLockTask()，可以向上滑动屏幕并按住即可退出锁模式）
+        kioskManager.configureLockTask()
+        // 启动锁任务
         startLockTask()
 
-        // ========== 关键 3：沉浸式隐藏状态栏+导航栏 ==========
+        // ========== 沉浸式隐藏状态栏+导航栏 ==========
         hideSystemBars()
 
         binding.btnOther.setOnClickListener {
             startActivity(Intent(this, OtherActivity::class.java))
+        }
+
+        binding.btnLock.setOnClickListener {
+            kioskManager.lockScreen()
         }
 
         binding.btnExit.setOnClickListener {

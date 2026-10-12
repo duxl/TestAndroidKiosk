@@ -1,4 +1,4 @@
-package com.test.kiosk
+package com.test.kiosk.activity
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.net.Network
-import android.os.BatteryManager
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
@@ -14,13 +13,14 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.test.kiosk.Utils
 import com.test.kiosk.databinding.ActivityOtherBinding
 
 class OtherActivity : AppCompatActivity() {
 
 
     private val TAG = "OtherActivity"
-    
+
     private val binding by lazy {
         ActivityOtherBinding.inflate(layoutInflater)
     }
