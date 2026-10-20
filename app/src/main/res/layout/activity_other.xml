@@ -16,6 +16,12 @@
         android:layout_height="wrap_content"
         android:text="系统设置" />
 
+    <Button
+        android:id="@+id/btn_install_apk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Owner 静默安装" />
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

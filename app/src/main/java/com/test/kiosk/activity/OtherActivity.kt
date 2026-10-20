@@ -42,6 +42,11 @@ class OtherActivity : AppCompatActivity() {
         binding.btnSysSetting.setOnClickListener {
             startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))
         }
+
+        binding.btnInstallApk.setOnClickListener {
+            val file = Utils.copyApkFromAssets(this, "v2.apk")
+            Utils.installSilently(this, file)
+        }
     }
 
     override fun onStart() {

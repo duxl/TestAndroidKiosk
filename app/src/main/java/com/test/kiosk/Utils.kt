@@ -1,25 +1,28 @@
 package com.test.kiosk
 
 import android.Manifest
-import android.app.admin.DevicePolicyManager
-import android.content.ComponentName
+import android.app.PendingIntent
 import android.content.Context
-import android.content.Context.DEVICE_POLICY_SERVICE
 import android.content.ContextWrapper
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageInstaller
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.net.wifi.WifiConfiguration
 import android.net.wifi.WifiManager
 import android.net.wifi.WifiManager.STATUS_NETWORK_SUGGESTIONS_SUCCESS
-import android.net.wifi.WifiNetworkSpecifier
 import android.net.wifi.WifiNetworkSuggestion
 import android.os.BatteryManager
 import android.os.Build
 import android.text.format.Formatter
 import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
+import com.test.kiosk.activity.InstallResultReceiver
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.IOException
+
 
 object Utils {
 
@@ -119,4 +122,74 @@ object Utils {
         return status == STATUS_NETWORK_SUGGESTIONS_SUCCESS // true 表示成功
     }
 
+    /**
+     * Owner静默安装apk
+     */
+    @Throws(IOException::class)
+    fun installSilently(
+        context: Context,
+        apkFile: File
+    ) {
+        val packageInstaller: PackageInstaller = context.packageManager.packageInstaller
+
+        val params = PackageInstaller.SessionParams(PackageInstaller.SessionParams.MODE_FULL_INSTALL)
+
+        val sessionId = packageInstaller.createSession(params)
+
+        packageInstaller.openSession(sessionId).use { session ->
+            FileInputStream(apkFile).use { `in` ->
+                session.openWrite(
+                    "update.apk", 0, apkFile.length()
+                ).use { out ->
+                    val buffer = ByteArray(64 * 1024)
+                    var length: Int
+
+                    while ((`in`.read(buffer).also { length = it }) != -1) {
+                        out.write(buffer, 0, length)
+                    }
+                    session.fsync(out)
+                }
+            }
+        }
+        val callbackIntent = Intent(context, InstallResultReceiver::class.java)
+
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            sessionId,
+            callbackIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT
+                    or PendingIntent.FLAG_MUTABLE
+        )
+
+        packageInstaller.openSession(sessionId).use { session ->
+            session.commit(pendingIntent.getIntentSender())
+        }
+    }
+
+    /**
+     * 从 assets 复制到 App 的内部存储目录
+     */
+    @Throws(IOException::class)
+    fun copyApkFromAssets(context: Context, assetName: String): File {
+        val updateDir = File(context.filesDir, "updates")
+
+        if (!updateDir.exists() && !updateDir.mkdirs()) {
+            throw IOException("无法创建 APK 目录")
+        }
+
+        val apkFile = File(updateDir, "update.apk")
+
+        context.assets.open(assetName).use { input ->
+            FileOutputStream(apkFile).use { output ->
+                val buffer = ByteArray(8192)
+                var length: Int
+
+                while ((input.read(buffer).also { length = it }) != -1) {
+                    output.write(buffer, 0, length)
+                }
+                output.flush()
+            }
+        }
+        return apkFile
+    }
 }

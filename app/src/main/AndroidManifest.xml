@@ -13,6 +13,8 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.BATTERY_STATS" />         <!-- 部分 ROM 读电池统计需要 -->
 
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
 
     <application
         android:allowBackup="true"
@@ -74,6 +76,7 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+        <receiver android:name="com.test.kiosk.activity.InstallResultReceiver" />
     </application>
 
 </manifest>
