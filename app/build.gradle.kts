@@ -18,8 +18,27 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        create("sign") {
+            storeFile = file("${rootDir.path}/app/keystore.jks")
+            storePassword = "allscores2026"
+            keyAlias = "allscores"
+            keyPassword = "allscores2026"
+            enableV1Signing = true
+            enableV2Signing = true
+            enableV3Signing = true
+        }
+    }
+
     buildTypes {
         release {
+            signingConfig = signingConfigs.getByName("sign")
+            optimization {
+                enable = false
+            }
+        }
+        debug {
+            signingConfig = signingConfigs.getByName("sign")
             optimization {
                 enable = false
             }
