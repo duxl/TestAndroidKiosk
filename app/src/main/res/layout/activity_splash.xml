@@ -62,5 +62,13 @@
             android:padding="10dp"
             android:text="普通 App 无法通过自身代码绕过系统授权，直接将自己升级为 Device Owner。"
             android:textSize="11sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="Device Owner的设备不能有登录账户，如果已登录需退出，或恢复出厂设置"
+            android:textColor="#F00"
+            android:textSize="11sp" />
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>
